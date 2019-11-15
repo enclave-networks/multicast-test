@@ -82,7 +82,7 @@ namespace multicast_test
                             {
                                 using (var client = new UdpClient())
                                 {
-                                    //client.JoinMulticastGroup(MulticastAddress, _bindingAddress);
+                                    client.JoinMulticastGroup(MulticastAddress, _bindingAddress);
 
                                     Console.WriteLine($"\nJoined multicast group {MulticastAddress}");
                                     Console.WriteLine();
