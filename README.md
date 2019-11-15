@@ -1,3 +1,3 @@
 # multicast-test
 
-Simple Multicast Testing Tool for Windows and Linux.
+Simple Command Line Multicast Testing Tool for Windows and Linux.
