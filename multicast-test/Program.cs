@@ -82,9 +82,7 @@ namespace multicast_test
                             {
                                 using (var client = new UdpClient())
                                 {
-                                    client.JoinMulticastGroup(MulticastAddress, _bindingAddress);
-
-                                    Console.WriteLine($"\nJoined multicast group {MulticastAddress}");
+                                    Console.WriteLine($"\nBound to {_bindingAddress}. Sending data to multicast group address {MulticastAddress}");
                                     Console.WriteLine();
 
                                     ulong n = 0;
@@ -147,7 +145,6 @@ namespace multicast_test
                 Console.WriteLine($"Received {message.Length} bytes from {ipEndPoint}: \"{message}\"");
             }
         }
-
 
         public static void SendMessage(UdpClient client, string message)
         {
