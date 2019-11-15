@@ -13,8 +13,8 @@ namespace multicast_test
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Simple Multicast Testing Tool for Windows");
-            Console.WriteLine("=========================================\n");
+            Console.WriteLine("Westgate Cyber Security - Simple Multicast Testing Tool");
+            Console.WriteLine("=======================================================\n");
             Console.WriteLine("Interface list:\n");
             Console.WriteLine($"    0: {"0.0.0.0",-40} Any");
 
