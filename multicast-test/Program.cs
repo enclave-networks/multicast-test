@@ -82,7 +82,7 @@ namespace multicast_test
                             {
                                 using (var client = new UdpClient())
                                 {
-                                    Console.WriteLine($"\nBound to {_bindingAddress}. Sending data to multicast group address {MulticastAddress}");
+                                    Console.WriteLine($"\nBound udp client to {_bindingAddress}. Sending data to multicast group address {MulticastAddress}");
                                     Console.WriteLine();
 
                                     ulong n = 0;
