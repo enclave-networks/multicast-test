@@ -1,0 +1,29 @@
+name: Build .NET Framework Project with Mono on Ubuntu 22.04.3
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Mono
+      run: |
+        sudo apt update
+        sudo apt install -y mono-complete
+
+    - name: Build project with xbuild (Mono's MSBuild tool)
+      run: xbuild /p:Configuration=Release ./multicast-test/multicast-test.csproj
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: ./multicast-test/bin/Release/
