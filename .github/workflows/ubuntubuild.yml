@@ -2,9 +2,9 @@ name: Build .NET Framework Project with Mono on Ubuntu 22.04.3
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
