@@ -53,6 +53,36 @@ namespace multicast_test
                 }
             }
 
+            // prompt to select a multicast address
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write("Enter multicast address to use: ");
+                string? enteredMc = Console.ReadLine();
+
+                if(enteredMc == null || enteredMc == string.Empty) continue;
+                List<int> enteredMcSplit = new List<int>();
+                enteredMc.Split(".").ToList().ForEach(x => enteredMcSplit.Add(Convert.ToInt32(x)));
+                if(enteredMcSplit.Count != 4) continue; // Not enough parts
+                if(enteredMcSplit[0] < 224 || enteredMcSplit[0] > 239) continue; // Check first part
+                for(int part = 1; part < 4; part++) if(enteredMcSplit[part] < 0 || enteredMcSplit[part] > 255) continue; // Check other parts
+                MulticastAddress = IPAddress.Parse(enteredMc);
+                break;
+            }
+
+            // prompt to select a multicast port
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write("Enter multicast port to use: ");
+                string? enteredPortString = Console.ReadLine();
+                if(enteredPortString == null || enteredPortString == string.Empty) continue;
+                if(!int.TryParse(enteredPortString, out int enteredPort)) continue;
+                if(enteredPort < 0 || enteredPort > 65535) continue;
+                MulticastPort = enteredPort;
+                break;
+            }
+
             // reset selection variable
             selection = -1;
 
@@ -157,9 +187,9 @@ namespace multicast_test
 
         private static IPAddress _bindingAddress;
 
-        private static readonly IPAddress MulticastAddress = IPAddress.Parse("239.0.1.2");
+        private static IPAddress MulticastAddress = IPAddress.Parse("239.0.1.2");
 
-        private const int MulticastPort = 20480;
+        private static int MulticastPort = 20480;
 
         private static readonly Dictionary<int, IPAddress> AddressDictionary = new Dictionary<int, IPAddress>();
 
