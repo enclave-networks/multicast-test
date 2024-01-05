@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
 namespace multicast_test
 {
@@ -13,8 +9,8 @@ namespace multicast_test
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Westgate Cyber Security - Simple Multicast Testing Tool");
-            Console.WriteLine("=======================================================\n");
+            Console.WriteLine("enclave.io - Simple Multicast Testing Tool");
+            Console.WriteLine("==========================================\n");
             Console.WriteLine("Interface list:\n");
             Console.WriteLine($"    0: {"0.0.0.0",-40} Any");
 
@@ -51,6 +47,47 @@ namespace multicast_test
                 {
                     // swallow
                 }
+            }
+
+            // prompt to select a multicast address
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write($"Enter multicast address (224.0.0.0 to 239.255.255.255) to use [default: {MulticastAddress}]: ");
+                string enteredMc = Console.ReadLine();
+                if(enteredMc == null || enteredMc == string.Empty) break; // Use default multicast address
+                if(IPAddress.TryParse(enteredMc, out IPAddress multicastAddress))
+                {
+                    if(IsMulticast(multicastAddress))
+                    {
+                        MulticastAddress = multicastAddress;
+                        break;
+                    }
+                    Console.WriteLine("A multicast IP addresses must be between 224.0.0.0 to 239.255.255.255.");
+                    continue;
+                }
+                Console.WriteLine("Not a valid IP address");
+            }
+
+            // prompt to select a multicast port
+            Console.WriteLine();
+            while (true)
+            {
+                Console.Write($"Enter multicast port to use (between 1 and 65535) [default: {MulticastPort}]: ");
+                string enteredPortString = Console.ReadLine();
+                if(string.IsNullOrEmpty(enteredPortString)) break; // Use default port
+                if(!int.TryParse(enteredPortString, out int enteredPort))
+                {
+                    Console.WriteLine("Not a valid number");
+                    continue;
+                }
+                if(enteredPort < 0 || enteredPort > 65535)
+                {
+                    Console.WriteLine("Port must be between 1 and 65535");
+                    continue;
+                }
+                MulticastPort = enteredPort;
+                break;
             }
 
             // reset selection variable
@@ -130,7 +167,7 @@ namespace multicast_test
             var receiveThread = new Thread(Receive);
             receiveThread.Start();
 
-            Console.WriteLine($"\nBound udp listener on {_bindingAddress}. Joined multicast group {MulticastAddress}. Waiting to receive data...\n");
+            Console.WriteLine($"\nBound udp listener on {_bindingAddress}. Joined multicast group {MulticastAddress}. Port {MulticastPort}. Waiting to receive data...\n");
         }
 
         public static void Receive()
@@ -155,11 +192,17 @@ namespace multicast_test
             client.Send(data, data.Length, ipEndPoint);
         }
 
+        private static bool IsMulticast(IPAddress ipAddress)
+        {
+            byte addressFirstOctet = ipAddress.GetAddressBytes()[0];
+            return addressFirstOctet >= 224 && addressFirstOctet <= 239;
+        }
+
         private static IPAddress _bindingAddress;
 
-        private static readonly IPAddress MulticastAddress = IPAddress.Parse("239.0.1.2");
+        private static IPAddress MulticastAddress = IPAddress.Parse("239.0.1.2");
 
-        private const int MulticastPort = 20480;
+        private static int MulticastPort = 20480;
 
         private static readonly Dictionary<int, IPAddress> AddressDictionary = new Dictionary<int, IPAddress>();
 

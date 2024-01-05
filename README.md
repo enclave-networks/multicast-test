@@ -16,8 +16,6 @@ On the sending host you'll see output like this (option 1):
 
 ![sending data](https://github.com/enclave-networks/multicast-test/raw/master/sending.png)
 
-By default, the tool uses multicast stream IP address 239.0.1.2 with port 20480. Pull requests to enable customisation are welcome.
-
 ![receiving data](https://github.com/enclave-networks/multicast-test/raw/master/receiving.png)
 
 See also the [Singlewire Multicast Testing Tool](https://support.singlewire.com/s/software-downloads/a17C0000008Dg7AIAS/ictestermulticastzip) discussed [here](https://salmannaqvi.com/2016/11/14/simple-multicast-testing-tool-for-windows/) by Salman Naqvi – 2 x CCIE. The Singlewire tool is perfectly adequate if you have a single network interface, but if you're working on systems with multiple network interfaces, this version should be quite useful.
