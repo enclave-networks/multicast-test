@@ -57,28 +57,39 @@ namespace multicast_test
             Console.WriteLine();
             while (true)
             {
-                Console.Write("Enter multicast address to use: ");
-                string? enteredMc = Console.ReadLine();
-
-                if(enteredMc == null || enteredMc == string.Empty) continue;
-                List<int> enteredMcSplit = new List<int>();
-                enteredMc.Split(".").ToList().ForEach(x => enteredMcSplit.Add(Convert.ToInt32(x)));
-                if(enteredMcSplit.Count != 4) continue; // Not enough parts
-                if(enteredMcSplit[0] < 224 || enteredMcSplit[0] > 239) continue; // Check first part
-                for(int part = 1; part < 4; part++) if(enteredMcSplit[part] < 0 || enteredMcSplit[part] > 255) continue; // Check other parts
-                MulticastAddress = IPAddress.Parse(enteredMc);
-                break;
+                Console.Write($"Enter multicast address to use [{MulticastAddress}]: ");
+                string enteredMc = Console.ReadLine();
+                if(enteredMc == null || enteredMc == string.Empty) break; // Use defult multicast address
+                if(IPAddress.TryParse(enteredMc, out IPAddress multicastAddress))
+                {
+                    if(IsMulticast(multicastAddress))
+                    {
+                        MulticastAddress = multicastAddress;
+                        break;
+                    }
+                    Console.WriteLine("A multicast IP addresses must be between 224.0.0.0 to 239.255.255.255.");
+                    continue;
+                }
+                Console.WriteLine("Not a valid IP address");
             }
 
             // prompt to select a multicast port
             Console.WriteLine();
             while (true)
             {
-                Console.Write("Enter multicast port to use: ");
-                string? enteredPortString = Console.ReadLine();
-                if(enteredPortString == null || enteredPortString == string.Empty) continue;
-                if(!int.TryParse(enteredPortString, out int enteredPort)) continue;
-                if(enteredPort < 0 || enteredPort > 65535) continue;
+                Console.Write($"Enter multicast port to use [{MulticastPort}]: ");
+                string enteredPortString = Console.ReadLine();
+                if(string.IsNullOrEmpty(enteredPortString)) break; // Use default port
+                if(!int.TryParse(enteredPortString, out int enteredPort))
+                {
+                    Console.WriteLine("Not a valid number");
+                    continue;
+                }
+                if(enteredPort < 0 || enteredPort > 65535)
+                {
+                    Console.WriteLine("Port must be between 1 and 65535");
+                    continue;
+                }
                 MulticastPort = enteredPort;
                 break;
             }
@@ -160,7 +171,7 @@ namespace multicast_test
             var receiveThread = new Thread(Receive);
             receiveThread.Start();
 
-            Console.WriteLine($"\nBound udp listener on {_bindingAddress}. Joined multicast group {MulticastAddress}. Waiting to receive data...\n");
+            Console.WriteLine($"\nBound udp listener on {_bindingAddress}. Joined multicast group {MulticastAddress}. Port {MulticastPort}. Waiting to receive data...\n");
         }
 
         public static void Receive()
@@ -183,6 +194,12 @@ namespace multicast_test
             var ipEndPoint = new IPEndPoint(MulticastAddress, MulticastPort);
 
             client.Send(data, data.Length, ipEndPoint);
+        }
+
+        private static bool IsMulticast(IPAddress ipAddress)
+        {
+            byte addressFirstOctet = ipAddress.GetAddressBytes()[0];
+            return addressFirstOctet >= 224 && addressFirstOctet <= 239;
         }
 
         private static IPAddress _bindingAddress;
