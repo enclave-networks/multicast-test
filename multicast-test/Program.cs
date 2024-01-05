@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
 namespace multicast_test
 {
@@ -13,8 +9,8 @@ namespace multicast_test
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("Westgate Cyber Security - Simple Multicast Testing Tool");
-            Console.WriteLine("=======================================================\n");
+            Console.WriteLine("enclave.io - Simple Multicast Testing Tool");
+            Console.WriteLine("==========================================\n");
             Console.WriteLine("Interface list:\n");
             Console.WriteLine($"    0: {"0.0.0.0",-40} Any");
 
@@ -57,9 +53,9 @@ namespace multicast_test
             Console.WriteLine();
             while (true)
             {
-                Console.Write($"Enter multicast address to use [{MulticastAddress}]: ");
+                Console.Write($"Enter multicast address (224.0.0.0 to 239.255.255.255) to use [default: {MulticastAddress}]: ");
                 string enteredMc = Console.ReadLine();
-                if(enteredMc == null || enteredMc == string.Empty) break; // Use defult multicast address
+                if(enteredMc == null || enteredMc == string.Empty) break; // Use default multicast address
                 if(IPAddress.TryParse(enteredMc, out IPAddress multicastAddress))
                 {
                     if(IsMulticast(multicastAddress))
@@ -77,7 +73,7 @@ namespace multicast_test
             Console.WriteLine();
             while (true)
             {
-                Console.Write($"Enter multicast port to use [{MulticastPort}]: ");
+                Console.Write($"Enter multicast port to use (between 1 and 65535) [default: {MulticastPort}]: ");
                 string enteredPortString = Console.ReadLine();
                 if(string.IsNullOrEmpty(enteredPortString)) break; // Use default port
                 if(!int.TryParse(enteredPortString, out int enteredPort))
