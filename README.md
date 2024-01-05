@@ -1,6 +1,6 @@
 # Simple Command Line Multicast Testing Tool
 
-**Download for Windows and Linux:** [https://github.com/enclave-networks/multicast-test/releases/download/1.0.0.0/multicast-test.exe](https://github.com/enclave-networks/multicast-test/releases/download/1.0.0.0/multicast-test.exe)
+**Download for Windows and Linux:** [https://github.com/enclave-networks/multicast-test/releases/tag/multicast-test-v1.0.1.0](https://github.com/enclave-networks/multicast-test/releases/tag/multicast-test-v1.0.1.0)
 
 Testing multicast traffic can be challenging and tends to involve running an application on two systems, phsical or virtual connected to  the network.
 
