@@ -1,0 +1,79 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Artifacts
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [linux, win]
+        arch: [x64, arm64]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build Project
+        run: |
+          dotnet publish -c Release -r ${{ matrix.os }}-${{ matrix.arch }} --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true -o ./output/${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Archive Binary
+        run: zip -j ./output/multicast-test-v${{ github.run_number }}-${{ matrix.os }}-${{ matrix.arch }}.zip ./output/${{ matrix.os }}-${{ matrix.arch }}/*
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: myproject-${{ matrix.os }}-${{ matrix.arch }}
+          path: ./output/myproject-v${{ github.run_number }}-${{ matrix.os }}-${{ matrix.arch }}.zip
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: actions/upload-release-asset@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/*
+          asset_name: myproject-v${{ github.run_number }}-${{ matrix.os }}-${{ matrix.arch }}.zip
+          asset_content_type: application/zip

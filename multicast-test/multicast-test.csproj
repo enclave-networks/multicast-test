@@ -6,6 +6,13 @@
     <RootNamespace>multicast_test</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>full</TrimMode>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
 </Project>

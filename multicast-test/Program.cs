@@ -7,6 +7,8 @@ namespace multicast_test
 {
     public class Program
     {
+        public static int TTL = 64;
+
         public static void Main(string[] args)
         {
             Console.WriteLine("enclave.io - Simple Multicast Testing Tool");
@@ -119,16 +121,19 @@ namespace multicast_test
                             {
                                 using (var client = new UdpClient())
                                 {
+                                    client.EnableBroadcast = true;
+                                    client.Client.SetSocketOption((_bindingAddress.AddressFamily == AddressFamily.InterNetwork) ? SocketOptionLevel.IP : SocketOptionLevel.IPv6, SocketOptionName.MulticastTimeToLive, TTL);
+
                                     Console.WriteLine($"\nBound udp client to {_bindingAddress}. Sending data to multicast group address {MulticastAddress}");
                                     Console.WriteLine();
 
                                     ulong n = 0;
                                     while (true)
                                     {
-                                        SendMessage(client, $"Simple Multicast Testing Tool for Windows @ {DateTime.Now.ToLongTimeString()}");
+                                        SendMessage(client, $"Simple Multicast Testing Tool @ {DateTime.Now.ToLongTimeString()}");
 
                                         Console.WriteLine($"Message {n,-5} sent to {MulticastAddress}:{MulticastPort}  TTL: {client.Ttl}");
-                                            Thread.Sleep(1000);
+                                        Thread.Sleep(1000);
                                         n++;
                                     }
                                 }
@@ -162,7 +167,10 @@ namespace multicast_test
         public static void Listen()
         {
             _udpClient = new UdpClient(MulticastPort);
+
+            _udpClient.EnableBroadcast = true;
             _udpClient.JoinMulticastGroup(MulticastAddress, _bindingAddress);
+            _udpClient.Client.SetSocketOption((_bindingAddress.AddressFamily == AddressFamily.InterNetwork) ? SocketOptionLevel.IP : SocketOptionLevel.IPv6, SocketOptionName.MulticastTimeToLive, TTL);
 
             var receiveThread = new Thread(Receive);
             receiveThread.Start();
