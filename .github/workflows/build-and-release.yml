@@ -35,7 +35,7 @@ jobs:
           dotnet publish -c Release -r ${{ matrix.os }}-${{ matrix.arch }} --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=true -o ./output/${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Archive Binary
-        run: zip -j ./output/myproject-v${{ github.run_number }}-${{ matrix.os }}-${{ matrix.arch }}.zip ./output/${{ matrix.os }}-${{ matrix.arch }}/*
+        run: zip -j ./output/multicast-test-v${{ github.run_number }}-${{ matrix.os }}-${{ matrix.arch }}.zip ./output/${{ matrix.os }}-${{ matrix.arch }}/*
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
